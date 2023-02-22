@@ -1,27 +1,47 @@
-import { useState } from "react";
+import { useReducer } from "react";
+
+const defaultInputState = {
+  value: "",
+  isTouched: false,
+};
+
+const inputReducer = (state, action) => {
+  if (action.type === "INPUT") {
+    return { value: action.value, isTouched: state.isTouched };
+  }
+
+  if (action.type === "BLUR") {
+    return { isTouched: true, value: state.value };
+  }
+
+  if (action.type === "RESET") {
+    return { value: "", isTouched: false };
+  }
+};
 
 const useInput = (validateValue) => {
-  const [enteredValue, setEnteredValue] = useState("");
-  const [isTouched, setIsTouched] = useState(false);
+  const [inputState, dispatchInputAction] = useReducer(
+    inputReducer,
+    defaultInputState
+  );
 
-  const enteredValueIsValid = validateValue(enteredValue);
-  const enteredInputIsInvalid = !enteredValueIsValid && isTouched;
+  const enteredValueIsValid = validateValue(inputState.value);
+  const enteredInputIsInvalid = !enteredValueIsValid && inputState.isTouched;
 
   const valueInputChangeHandler = (event) => {
-    setEnteredValue(event.target.value);
+    dispatchInputAction({ type: "INPUT", value: event.target.value });
   };
 
   const valueInputBlurHandler = (event) => {
-    setIsTouched(true);
+    dispatchInputAction({ type: "BLUR" });
   };
 
   const reset = () => {
-    setEnteredValue("");
-    setIsTouched(false);
+    dispatchInputAction({ type: "RESET" });
   };
 
   return {
-    value: enteredValue,
+    value: inputState.value,
     isValid: enteredValueIsValid,
     enteredInputIsInvalid, //key value shortcut for objects with same key and value name in javascript
     valueInputChangeHandler,

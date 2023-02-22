@@ -45,7 +45,7 @@ const BasicForm = (props) => {
       return;
     }
 
-    console.log(enteredFirstName + " " + enteredLastName + " " + enteredEmail);
+    console.log(enteredFirstName, enteredLastName, enteredEmail);
 
     // nameInputRef.current.value = ''; => NOT IDEAL, DON'T MANIPULATE THE DOM
     resetFirstNameProperties();
